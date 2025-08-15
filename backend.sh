@@ -60,8 +60,29 @@ curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expen
 VALIDATE $? "Downloading backend applicataion code"
 
 cd /app
+rm -rf /app/* # remove the existing code
+
 unzip /tmp/backend.zip &>>$LOG_FILE
 VALIDATE $? "Extracting backend application code"
+
+npm install &>>$LOG_FILE
+cp /home/ec2-user/expense-shell/backend.service /etc/systemd/system/backend.service
+
+#load the data before running backend
+dnf install mysql -y &>>$LOG_FILE
+VALIDATE $? "Installing mysql client"
+
+mysql -h mysql.awspractice.shop -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE
+VALIDATE $? "Schema loading is success"
+
+Systemctl daemon-reload &>>$LOG_FILE
+VALIDATE $? "Daemon backend"
+
+Systemctl enable backend &>>$LOG_FILE
+VALIDATE $? "Enabled backend"
+
+Systemctl restart backend &>>$LOG_FILE
+VALIDATE $? "Restarted backend"
 
 
 
