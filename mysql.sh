@@ -13,7 +13,7 @@ N="\e[0m"
 Y="\e[33m"
 
 CHECK_ROOT(){
-    if [ $USERID -ne 0 ]
+    if [ "$USERID" -ne 0 ]
     then
         echo -e "$R Please run this script with root priveleges $N" | tee -a $LOG_FILE
         exit 1
