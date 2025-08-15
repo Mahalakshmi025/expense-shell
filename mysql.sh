@@ -1,9 +1,9 @@
 #!/bin/bash
 
-LOGS_FOLDER="/var/log/shell-script"
+LOGS_FOLDER="/var/log/expense"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
-TIME_STAMP="$LOGS_FOLDER/$SCRIPT_NAME-$TIME_STAMP.log"
-
+TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME-$TIMESTAMP.log"
 mkdir -p $LOGS_FOLDER
 
 USERID=$(id -u)
@@ -13,12 +13,11 @@ N="\e[0m"
 Y="\e[33m"
 
 CHECK_ROOT(){
-    if [ USERID -ne 0 ]
+    if [ $USERID -ne 0 ]
     then
-       echo -e "$R please run this script with root privilages $N" .&>>$LOGS_FILE
-       exit 1
+        echo -e "$R Please run this script with root priveleges $N" | tee -a $LOG_FILE
+        exit 1
     fi
-
 }
 
 VALIDATE(){
@@ -44,7 +43,7 @@ VALIDATE $? "Enabled MySQL Server"
 systemctl start mysqld &>>$LOG_FILE
 VALIDATE $? "Started MySQL server"
 
-mysql -h mysql.awspractice.shop -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
+mysql -h mysql.daws81s.online -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
     echo "MySQL root password is not setup, setting now" &>>$LOG_FILE
@@ -56,4 +55,4 @@ fi
 
 # Assignment
 # check MySQL Server is installed or not, enabled or not, started or not
-# implement the above thin
+# implement the above things
